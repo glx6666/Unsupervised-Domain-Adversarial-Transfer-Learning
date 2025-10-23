@@ -79,9 +79,9 @@ def setup_logger(log_dir, log_filename):
 # def main(v, f1, f2, model):
 def main(v, f1, f2, model):
     parser = argparse.ArgumentParser(description='PyTorch PN_Data Training')
-    parser.add_argument('--source_data', metavar='DIR', default=f'G:\\数据\\dataset\\105行星齿轮箱_new_shanke\\source_data\\{v}\\{f1}', help='path to dataset')
-    parser.add_argument('--target_data', metavar='DIR', default=f'G:\\数据\\dataset\\105行星齿轮箱_new_shanke\\target_data\\{v}\\{f2}', help='path to dataset')
-    parser.add_argument('--test_data', metavar='DIR', default=f'G:\\数据\\dataset\\105行星齿轮箱_new_shanke\\val_data\\{v}\\{f2}', help='path to dataset')
+    parser.add_argument('--source_data', metavar='DIR', default=\\source_data\\{v}\\{f1}', help='path to dataset')
+    parser.add_argument('--target_data', metavar='DIR', default=\\target_data\\{v}\\{f2}', help='path to dataset')
+    parser.add_argument('--test_data', metavar='DIR', default=\\val_data\\{v}\\{f2}', help='path to dataset')
     parser.add_argument('--classes', default=5, type=int, metavar='N', help='number of classification')
     parser.add_argument('-j', '--workers', default=0, type=int, metavar='N', help='number of data loading workers (default: 2)')
     parser.add_argument('--epochs', default=200, type=int, metavar='N', help='number of total epochs to run')
@@ -96,8 +96,8 @@ def main(v, f1, f2, model):
     # save
     parser.add_argument('--save_or_not', default=True, type=bool)
     parser.add_argument('--save_model', default=True, type=bool)
-    parser.add_argument('--save_dir', default=r'G:\数据\result', type=str, help='save_root')
-    parser.add_argument('--save_acc_loss_dir', default=r'G:\数据\result', type=str)
+    parser.add_argument('--save_dir', default='.\result', type=str, help='save_root')
+    parser.add_argument('--save_acc_loss_dir', default='.\result', type=str)
 
     # 判断是否含有gpu，否则加载到cpu
     if torch.cuda.is_available():
@@ -200,11 +200,10 @@ def main(v, f1, f2, model):
 
         lr_scheduler = StepLR(optimizer, gamma=args.gamma, step_size=args.stepsize)
 
-    save_dir1 = os.path.join(args.save_dir, f'{model}_105行星齿轮箱')
+    save_dir1 = os.path.join(args.save_dir, f'{model}_')
     save_dir = os.path.join(save_dir1, args.use_model + f'{v}_{f1}_{v}_{f2}')
     print(f'数据保存到{save_dir}')
     logger = setup_logger(save_dir, log_filename='train.log')
-    #logger_a = setup_logger(save_dir, log_filename='权重选择.log')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)  # 如果文件夹不存在，则创建文件夹
     args.save_acc_loss_dir = os.path.join(save_dir, 'train_test_result.csv')
@@ -217,13 +216,12 @@ def main(v, f1, f2, model):
     #source_train_acc_list,source_total_loss_list, class_loss_list, domain_loss_list = [], [], [], []
     #test_acc_list, test_loss_list = [], []
     source_train_acc_list, source_total_losses_list, class_losses_list, weighted_domain_losses_list, test_acc_list, losses_list = [], [], [], [], [], []
-    fault_classes = ['0','1','2','3','4'] #if f1 == '0A' or f2 == '0A' else ['0','1','2','4','5','6'] ,'7','8','9'
+    fault_classes = ['0','1','2','3','4']
     start_time = time.time()
     logger.info(f"Start training...--{model}")
     for epoch in range(args.start_epoch, args.epochs):
         if args.use_model == 'CAT':
-            source_teacher_acc_list, source_teacher_losses_list, target_teacher_acc_list, target_student_losses_list = [], [], [], []
-            test_acc_list, losses_list = [], []
+            
             source_teacher_acc, source_teacher_losses, target_teacher_acc, target_student_losses = train_CAT(logger, source_loader, target_loader, teacher_model, student_model, epoch,
                       optimizer_t, optimizer_s, lr_scheduler_t, lr_scheduler_s, criterion, device, args.classes,
                       lambda_cluster=0.5)
@@ -268,7 +266,7 @@ def main(v, f1, f2, model):
                 plot_CAT(source_teacher_acc_list, source_teacher_losses_list, target_teacher_acc_list, target_student_losses_list, test_acc_list, losses_list, cm, save_dir, fault_classes)
                 plot_tsne_CAT(args, save_dir, student_model, teacher_model, student_model_name, teacher_model_name)
         if args.use_model == 'DAN':
-            #source_acc_list, source_losses_list, val_acc_list, val_losses_list = [], [], [], []
+           
             source_acc, source_losses = tarin_DAN(logger, epoch, feature_extractor_DAN, classification_extractor_DAN, source_loader, target_loader,
                       criterion, optimizer_DAN, lr_scheduler_DAN, device, maximum_mean_discrepancy)
             val_acc, val_losses, all_pred, all_label = test_DAN(logger, test_loader, feature_extractor_DAN, classification_extractor_DAN, criterion, epoch, device)
@@ -308,7 +306,7 @@ def main(v, f1, f2, model):
                 plot_tsne_DAN(args, save_dir, feature_extractor_DAN, classification_extractor_DAN,
                               feature_extractor_name, classification_extractor_name)
         if args.use_model == 'DANN':
-            #source_total_acc_list, source_total_losses_list, val_acc_list, val_losses_list = [], [], [], []
+            
             source_total_acc, source_total_losses = tarin_DANN( logger, source_loader, target_loader, feature_extractor_DANN, classification_extractor_DANN,
                        domain_extractor_DANN, criterion, domain_losses, optimizer_DANN, epoch, lr_scheduler_DANN, device, maximum_mean_discrepancy)
             val_acc, val_losses, all_pred, all_label= test_DANN(logger, test_loader, feature_extractor_DANN, classification_extractor_DANN, criterion, epoch, device)
@@ -345,7 +343,7 @@ def main(v, f1, f2, model):
                 plot_tsne_DANN(args, save_dir, feature_extractor_DANN, classification_extractor_DANN,
                                feature_extractor_name, classification_extractor_name)
         if args.use_model == 'JAN':
-            source_acc_list, source_losses_list,test_acc_list,losses_list = [], [], [], []
+            
             source_acc, source_losses=tarin_JAN(source_loader, target_loader, JAN_model, optimizer_JAN, device,
                       epoch, jmmd_loss, criterion, logger, lr_scheduler_JAN)
             test_acc, losses, all_labels, all_preds=test_JAN(JAN_model, test_loader, device, criterion, logger, epoch)
@@ -379,7 +377,7 @@ def main(v, f1, f2, model):
                 plot_JAN(source_acc_list, source_losses_list,test_acc_list,losses_list, cm,save_dir, fault_classes)
                 plot_tsne_JAN(args, save_dir, JAN_model,  JAN_model_name)
         if args.use_model == 'MCD':
-            source_acc_list, source_losses_list, losses_dis_list, losses_g_list, val_acc_list, val_losses_list = [], [], [], [], [], []
+            
             source_acc, source_losses, losses_dis, losses_g = tarin_MCD(logger, feature_extractor_MCD, classification_extractor1, classification_extractor2, source_loader, target_loader, optimizer_g,
                       optimizer_f, criterion, device, epoch, lr_scheduler_f, lr_scheduler_g, n_step_B=4)
             val_acc, val_losses, all_preds, all_labels = test_MCD(epoch, feature_extractor_MCD, classification_extractor1, classification_extractor2, test_loader, device, criterion, logger)
@@ -422,7 +420,7 @@ def main(v, f1, f2, model):
                 plot_tsne_MCD(args, save_dir, feature_extractor_MCD, classification_extractor1, classification_extractor2,
                               feature_extractor_MCD_name, classification_extractor1_name, classification_extractor2_name)
         if args.use_model == 'my_method':
-            #source_train_acc_list, source_total_losses_list, class_losses_list, weighted_domain_losses_list, test_acc_list, losses_list = [], [], [], [], [], []
+            
             source_train_acc,source_total_losses, class_losses, weighted_domain_losses = train(logger, source_loader, target_loader, feature_extractor, classification_extractor, domain_extractor,
                   criterion, domain_losses, optimizer, epoch, lr_scheduler, device, maximum_mean_discrepancy)
             test_acc, losses, all_labels, all_preds = test(logger, test_loader, feature_extractor, classification_extractor, domain_extractor, criterion, epoch,
@@ -465,11 +463,6 @@ def main(v, f1, f2, model):
 
 
 if __name__ == '__main__':
-    # v1 = [ '1500r', '1800r', '2000r', '2500r']  # '800~1500r', '1000r', '1000~2000r', '1500~2500r', '1500r',,'1800r', '2000r', '2500r', '3000r' , '800~1500r', '1000r', '1000~2000r', '1500~2500r', '1500r','1800r', '2000r', '2500r', '3000r'
-    # v2 = ['800~1500r', '1000r', '1000~2000r', '1500~2500r', '1500r','1800r', '2000r', '2500r', '3000r']
-    # fnn = ['0A', '20A', '40A', '60A']
-    # fnn1 = ['0-0.2A','0-0.35A','0-0.5A','0A', '0.2A', '0.35A', '0.5A']
-    # fnn2 = ['0-0.2A','0-0.35A','0-0.5A','0A', '0.2A', '0.35A', '0.5A']
     v2 = [ '100', '300', '500', '700', '900', '1200','1500'] #'100', '300', '500', '700', '900', '1200','100', '300', '500', '700', '900', '1200',
     fnn = ['0V', '1V', '2V', '3V', '4V']
     dic = ['DAN','DANN', 'JAN', 'MCD', 'my_method']  # 'CAT', 'DAN','DANN', 'JAN', 'MCD', 'my_method' #'cos', 'cos_entropy', 'cos_mmd','no_entropy',
@@ -479,24 +472,14 @@ if __name__ == '__main__':
             for f1 in fnn:
                 for f2 in fnn:
                     if f1 != f2:
-                        source_path = f'G:\\数据\\dataset\\105行星齿轮箱_new_shanke\\source_data\\{v}\\{f1}'
-                        target_path = f'G:\\数据\\dataset\\105行星齿轮箱_new_shanke\\target_data\\{v}\\{f2}'
-                        test_path = f'G:\\数据\\dataset\\105行星齿轮箱_new_shanke\\val_data\\{v}\\{f2}'
+                        source_path = \\source_data\\{v}\\{f1}'
+                        target_path = \\target_data\\{v}\\{f2}'
+                        test_path = \\val_data\\{v}\\{f2}'
                         if os.path.exists(source_path) and  os.path.exists(target_path) and  os.path.exists(test_path):
                             print(f'转速{v},负载{f1}向转速{v}负载{f2}迁移')
                             main(v, f1, f2, model)
                         else:
                             pass
-    # dic = 'my_method'
-    # a = [0.001, 0.01, 0.1, 0.5, 1, 2, 5, 7, 10]
-    # b = [0.001, 0.01, 0.1, 0.5, 1, 2, 5, 7, 10]
-    # c = [0.001, 0.01, 0.1, 0.5, 1, 2, 5, 7, 10]
-    # d = [0.001, 0.01, 0.1, 0.5, 1, 2, 5, 7, 10]
-    # for i in a:
-    #     for j in b:
-    #         for k in c:
-    #             for l in d:
-    #                 print(f'a:{i},b:{j},c:{k},d:{l}')
-    #                 main(dic, i, j, k, l)
+    
 
 
