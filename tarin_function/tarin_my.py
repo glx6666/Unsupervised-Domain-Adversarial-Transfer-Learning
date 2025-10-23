@@ -42,8 +42,8 @@ def train(logger, source_loader, target_loader ,feature_extractor, classificatio
         #计算分类损失
         source_class_pred = classification_extractor(sourcer_features)
         target_class_pred = classification_extractor(target_features)
-        class_loss = criterion(source_class_pred, source_label.long()) + criterion(target_class_pred, target_label.long())
-        #class_loss = criterion(source_class_pred, source_label.long()) #+ criterion(target_class_pred,target_label.long())
+        class_loss = criterion(source_class_pred, source_label.long()) 
+        
         class_losses.update(class_loss.item(), source_label.size(0))
         #最小熵
         target_class_pred = classification_extractor(target_features.detach())
@@ -66,11 +66,9 @@ def train(logger, source_loader, target_loader ,feature_extractor, classificatio
 
         #计算总损失
 
-        source_total_loss = class_loss + 0.001 * entropy_min_loss - 0.5 * entropy_max_loss + 0.8 *weighted_domain_loss + 0.5 *MMDloss
+        source_total_loss = class_loss +  entropy_min_loss -  entropy_max_loss + weighted_domain_loss + MMDloss
 
-        #elif i == 'wasserstein':
-        source_total_losses.update(source_total_loss.item(), source_label.size(0))
-        # Compute accuracy
+        
         _, source_predicted = torch.max(source_class_pred, 1)
         _, target_predicted = torch.max(target_class_pred, 1)
         source_accuracy = (source_predicted == source_label).sum().item() / source_label.size(0)
@@ -120,11 +118,7 @@ def test(logger, test_loader, feature_extractor, classification_extractor, domai
 
 
 def entropy_loss(predictions):
-    """
-    计算信息熵损失
-    :param predictions: 模型的 Softmax 输出, shape=[batch_size, num_classes]
-    :return: 熵损失, 取 batch 平均
-    """
     epsilon = 1e-5  # 避免 log(0)
     entropy = -torch.sum(predictions * torch.log(predictions + epsilon), dim=1)  # 按类别求和
+
     return entropy.mean()  # 取 batch 平均
