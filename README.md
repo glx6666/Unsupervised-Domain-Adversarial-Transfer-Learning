@@ -31,23 +31,40 @@ This project demonstrates how to transfer labeled information from a **source do
 
 ## Citation
 
-If this work or method is helpful for your research, please cite the following paper:
+If this work or method is helpful for your research, please cite the following papers:
 
-> **Second-Order Cyclostationary Signal Extraction Method With Combined MOMEDA and Multiband Information Enhancement**
-> *Kun He, Wei Kang, Yu Guo, Maoxuan Zhou, Jiawei Fan, and Xin Chen*
-> *IEEE Transactions on Instrumentation and Measurement*, vol. 74, pp. 1–12, 2025.
-> DOI: [10.1109/TIM.2025.3541794](https://doi.org/10.1109/TIM.2025.3541794)
+1. **Wei Kang, Maoxuan Zhou, Yu Guo, Tianfu Li, Jiandong Li, Yuwei Liu**,  
+   *Generative adversarial augmented multi-scale CNN for machine fault diagnosis*,  
+   **Control Engineering Practice**, Volume 167, 2026, 106625.  
+   DOI: 10.1016/j.conengprac.2025.106625
 
-BibTeX citation:
+2. **Kun He, Wei Kang, Yu Guo, Maoxuan Zhou, Jiawei Fan, Xin Chen**,  
+   *Second-Order Cyclostationary Signal Extraction Method With Combined MOMEDA and Multiband Information Enhancement*,  
+   **IEEE Transactions on Instrumentation and Measurement**, vol. 74, pp. 1–12, 2025.  
+   DOI: 10.1109/TIM.2025.3541794
+
+---
+
+### BibTeX citations
 
 ```bibtex
+@article{Kang2026GAAMSCNN,
+  title={Generative adversarial augmented multi-scale CNN for machine fault diagnosis},
+  author={Kang, Wei and Zhou, Maoxuan and Guo, Yu and Li, Tianfu and Li, Jiandong and Liu, Yuwei},
+  journal={Control Engineering Practice},
+  volume={167},
+  pages={106625},
+  year={2026},
+  issn={0967-0661},
+  doi={10.1016/j.conengprac.2025.106625}
+}
+
 @ARTICLE{10904169,
   author={He, Kun and Kang, Wei and Guo, Yu and Zhou, Maoxuan and Fan, Jiawei and Chen, Xin},
   journal={IEEE Transactions on Instrumentation and Measurement}, 
   title={Second-Order Cyclostationary Signal Extraction Method With Combined MOMEDA and Multiband Information Enhancement}, 
   year={2025},
   volume={74},
-  number={},
   pages={1-12},
   keywords={Feature extraction;Deconvolution;Kurtosis;Vibrations;Noise;Fault diagnosis;Cyclostationary process;Interference;Filtering algorithms;Entropy;Fault diagnosis;multiband information;multipoint optimal minimum entropy deconvolution (MED) adjusted;second-order cyclostationary;shock signal enhancement},
   doi={10.1109/TIM.2025.3541794}
